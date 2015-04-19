@@ -1,0 +1,1 @@
+# uwsgi-local-dns-resolver
