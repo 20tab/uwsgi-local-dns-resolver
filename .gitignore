@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.sublime-workspace
+.ropeproject/
+.noseids
+wallpaper.*
+*.egg-info/
