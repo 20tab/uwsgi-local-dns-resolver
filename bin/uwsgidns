@@ -2,7 +2,7 @@
 
 """uWSGI local DNS resolver executable."""
 
-from uwsgidns.LocalDNSServer import main
+from uwsgidns.main import main
 
 if __name__ == '__main__':
     main()
