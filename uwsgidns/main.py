@@ -71,7 +71,7 @@ def start_dns_server(proxy, upstream, subscription_server_uri=None):
     )
 
     # Start the subscription listener BEFORE the server.
-    # start_subscription_listener(resolver.add_domain_from_uwsgi)
+    start_subscription_listener(resolver.add_domain_from_uwsgi)
 
     if subscription_server_uri:
         # Start the subscription checker BEFORE the server.
