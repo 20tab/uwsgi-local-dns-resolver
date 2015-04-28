@@ -11,6 +11,7 @@ uWSGI-DNS is still a work in progress. As a consequence, its APIs could be subje
 - Python 2 & Python 3 compatibility.
 - UNIX/Linux systems compatibility.
 - Automatic domain refresh on new uWSGI subscriptions.
+- Failed nodes detection and handling.
 
 ## Installation
 Until uWSGI-DNS lands on PyPi you can install it as follows:
@@ -57,10 +58,14 @@ optional arguments:
 uWSGI-DNS can act as a DNS proxy (`-p`), forwarding each non-local request to the upstream server specified with the `-u` flag;
 otherwise, it simply drops such requests and let the OS fallback DNS server handle them.
 
+### uWSGI stats
+Setting the `-s` will let uWSGI-DNS poll the uWSGI subscription server periodically.
+In this way uWSGI-DNS will notice failed/disappeared HTTP nodes and will remove them from the local domains.
+
 ## uWSGI integration
 The integration with uWSGI is simple and straightforward.
-We assume you use the uWSGI http subscription server.
-To integrate uWSGI-DNS you can edit your emperor/subscription server as follows:
+We assume you use the uWSGI HTTP subscription server.
+To integrate uWSGI-DNS you can edit the configuration file of your emperor/subscription server as follows:
 
 ```ini
 ; uWSGI subscription server - ini configuration file
@@ -75,7 +80,7 @@ http-resubscribe = 127.0.0.1:9696
 ; you can tweak the command line arguments and the path here
 attach-daemon = uwsgidns
 ```
-Anytime you'll launch the subscription system, the uWSGI-DNS server will launch whit it.
+Anytime you'll launch the subscription system, the uWSGI-DNS server will launch with it.
 
 ## OS integration
 TODO: other OSs integration.
@@ -132,7 +137,7 @@ To do so, create the file `it.unbit.uwsgi.emperor.plist` in the `/Library/Launch
 </dict>
 </plist>
 ```
-Create the vassals ini in your home folder and then start the uWSGI emperor with the command:
+Put the vassals configuration files in your home folder and then start the uWSGI emperor with the command:
 ```bash
 $ sudo launchctl load /Library/LaunchDaemons/it.unbit.uwsgi.emperor.plist
 ```
