@@ -18,6 +18,7 @@ from uwsgidns.logging import logger
 from uwsgidns.server import LocalResolver, LocalDNSLogger, ThreadedUDPServer
 from uwsgidns.constants import LISTENER_HOST, LISTENER_PORT, DNS_HOST, DNS_PORT
 from uwsgidns.listener import SubscriptionHandler
+from uwsgidns.checker import SubscritionChecker
 
 
 def start_subscription_listener(trigger):
@@ -40,11 +41,20 @@ def start_subscription_listener(trigger):
     thread.start()
 
 
-def start_dns_server(proxy, upstream, uwsgi_stats):
-    """Start handling DNS requests.
-
-    TODO: monitor uWSGI stats for dropped nodes.
+def start_subscription_checker(subscription_server_uri, trigger):
     """
+        Start polling the uWSGI subscription server.
+
+        :subscription_server_uri: The URI (host:port) of the uWSGI subscription server
+        :trigger: Check the SubscritionChecker docstring.
+    """
+    logger.info("uWSGI subscription checker is starting...")
+    SubscritionChecker.trigger = trigger
+    SubscritionChecker(subscription_server_uri)
+
+
+def start_dns_server(proxy, upstream, subscription_server_uri=None):
+    """Start handling DNS requests. """
     logger.info("uWSGI-DNS resolver is starting...")
 
     resolver = LocalResolver(
@@ -61,7 +71,11 @@ def start_dns_server(proxy, upstream, uwsgi_stats):
     )
 
     # Start the subscription listener BEFORE the server.
-    start_subscription_listener(resolver.add_domain_from_uwsgi)
+    # start_subscription_listener(resolver.add_domain_from_uwsgi)
+
+    if subscription_server_uri:
+        # Start the subscription checker BEFORE the server.
+        start_subscription_checker(subscription_server_uri, resolver.add_domains)
 
     # And start the DNS server.
     dns_server.start()

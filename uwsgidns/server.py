@@ -16,8 +16,7 @@ from dnslib import RR, QTYPE
 from dnslib.server import BaseResolver, DNSRecord, UDPServer, DNSError
 
 from uwsgidns.logging import logger
-from uwsgidns.constants import LOCALHOST_ZONE
-from uwsgidns.constants import UWSGI_SUBSCRIPTIONS_KEY
+from uwsgidns.constants import LOCALHOST_ZONE, UWSGI_SUBSCRIPTIONS_KEY
 
 
 class LocalDNSLogger(object):
@@ -123,7 +122,7 @@ class LocalResolver(BaseResolver):
         else:
             self.proxy = False
 
-        self.semaphore = threading.Semaphore()
+        self.lock = threading.Lock()
 
     def add_domain_from_uwsgi(self, uwsgi_dict):
         """
@@ -137,11 +136,23 @@ class LocalResolver(BaseResolver):
                 domain += "."
 
             if domain not in self.domains:
-                self.semaphore.acquire()
-                self.domains.add(domain)
-                self.semaphore.release()
+                with self.lock():
+                    self.domains.add(domain)
         except KeyError:
             logger.error("Malformed dict passed to add_domain_from_uwsgi.")
+
+    def add_domains(self, domains):
+        """
+        Add each domain in domains to localhost.
+        """
+        domains = {
+            d + "." if not d.endswith(".") else d
+            for d in domains
+        }
+
+        if domains != self.domains:
+            with self.lock:
+                self.domains = domains
 
     def resolve(self, request, handler):
         """
@@ -152,9 +163,8 @@ class LocalResolver(BaseResolver):
         reply = request.reply()
         qname = request.q.qname
 
-        self.semaphore.acquire()
-        local_domain = str(qname) in self.domains
-        self.semaphore.release()
+        with self.lock:
+            local_domain = str(qname) in self.domains
 
         if local_domain:  # If we have to handle this domain:
             # Replace labels with request label
