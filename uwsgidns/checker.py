@@ -14,7 +14,7 @@ from uwsgidns.constants import UWSGI_SUBSCRIPTIONS, \
 
 class SubscritionChecker(object):
 
-    """Periodically ask the uWSGI subscription server for subscripted domains."""
+    """Periodically ask the uWSGI subscription server for subscribed domains."""
 
     """
         trigger is called, if set, after checking for new uWSGI subscriptions.
@@ -31,15 +31,15 @@ class SubscritionChecker(object):
         finally:
             self.remote, self.port = remote, port
 
-        self._create_timer()
         self._create_socket()
 
-    def _create_timer(self):
-        self.timer = threading.Timer(
+    def _start_timer(self):
+        timer = threading.Timer(
             UWSGI_TIMEOUT_CHECKER,
             self._create_socket
         )
-        self.timer.daemon = True
+        timer.daemon = True
+        timer.start()
 
     def _create_socket(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -56,7 +56,7 @@ class SubscritionChecker(object):
             self.socket.close()
 
             # we'll try again later...
-            self.timer.start()
+            self._start_timer()
 
     def _poll(self):
         with contextlib.closing(self.socket.makefile()) as f:
@@ -72,4 +72,4 @@ class SubscritionChecker(object):
                 SubscritionChecker.trigger(domains)
 
         # ... and poll again later
-        self.timer.start()
+        self._start_timer()
