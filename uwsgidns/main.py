@@ -84,7 +84,7 @@ def start_dns_server(proxy, upstream, subscription_server_uri=None):
 def create_parser():
     """Create the CLI argument parser."""
     parser = argparse.ArgumentParser(
-        description="DNS server that resolves to localhost uWSGI's HTTP subscripted domains."
+        description="DNS server that resolves to localhost uWSGI's HTTP subscribed domains."
     )
 
     parser.add_argument(

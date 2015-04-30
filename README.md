@@ -23,12 +23,10 @@ $ python setup.py install  # you could need sudo here
 
 And if you want, you can test the server with:
 ```bash
-$ # uwsgi-http-stats-uri is of the form host:port
-$ sudo uwsgidns uwsgi-http-stats-uri # we need sudo to bind on reserved port 53
+$ sudo uwsgidns # we need sudo to bind on reserved port 53
 ```
 
 Once started, you should have a DNS server running on `localhost:53`.
-Pressing `CTRL-C` will let uWSGI-DNS reload the list of domains that must be resolved on your machine.
 
 Note: installing uWSGI-DNS inside a virtualenv is obviously possible, but you should use particular care while integrating it into uWSGI configuration files.
 
@@ -38,7 +36,7 @@ $ uwsgidns -h
 usage: uwsgidns [-h] [-l {CRITICAL,ERROR,WARNING,INFO,DEBUG,NOTSET}] [-p]
                 [-u upstream DNS server URI] [-s uwsgi-HTTP-stats-URI]
 
-DNS server that resolves to localhost uWSGI HTTP subscripted domains.
+DNS server that resolves to localhost uWSGI HTTP subscribed domains.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -70,7 +68,7 @@ To integrate uWSGI-DNS you can edit the configuration file of your emperor/subsc
 ```ini
 ; uWSGI subscription server - ini configuration file
 http = :80
-http-subscription-server = 127.0.0.1:2626
+http-subscription-server = 127.0.0.1:5005
 http-stats-server = 127.0.0.1:5004
 
 ; resubscribe let uWSGI-DNS know about new HTTP nodes
