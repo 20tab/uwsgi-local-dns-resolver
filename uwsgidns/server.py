@@ -130,7 +130,9 @@ class LocalResolver(BaseResolver):
         add its domain to the local domain list.
         """
         try:
-            domain = uwsgi_dict.get(UWSGI_SUBSCRIPTIONS_KEY)
+            # Unicode sandwich
+            domain = uwsgi_dict[UWSGI_SUBSCRIPTIONS_KEY.encode()]
+            domain = domain.decode()
 
             if not domain.endswith("."):
                 domain += "."
@@ -139,7 +141,7 @@ class LocalResolver(BaseResolver):
                 with self.lock():
                     self.domains.add(domain)
         except KeyError:
-            logger.error("Malformed dict passed to add_domain_from_uwsgi.")
+            logger.error("add_domain_from_uwsgi received a malformed dictionary.")
 
     def add_domains(self, domains):
         """
