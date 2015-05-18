@@ -110,8 +110,6 @@ To do so, create the file `it.unbit.uwsgi.emperor.plist` in the `/Library/Launch
                 <string>/usr/local/bin/uwsgi</string>
                 <string>--master</string>
                 <string>--die-on-term</string>
-                <string>--plugin</string>
-                <string>syslog</string>
                 <string>--logger</string>
                 <string>syslog:</string>
                 <string>--emperor</string>
@@ -130,7 +128,7 @@ To do so, create the file `it.unbit.uwsgi.emperor.plist` in the `/Library/Launch
                 <string>--emperor-stats-server</string>
                 <string>127.0.0.1:5000</string>
                 <string>--attach-daemon</string>
-                <string>/usr/local/bin/uwsgidns</string>
+                <string>/usr/local/bin/uwsgidns -p -s 127.0.0.1:5004</string>
         </array>
 </dict>
 </plist>
