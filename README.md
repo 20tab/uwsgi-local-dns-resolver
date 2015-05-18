@@ -110,8 +110,6 @@ To do so, create the file `it.unbit.uwsgi.emperor.plist` in the `/Library/Launch
                 <string>/usr/local/bin/uwsgi</string>
                 <string>--master</string>
                 <string>--die-on-term</string>
-                <string>--plugin</string>
-                <string>syslog</string>
                 <string>--logger</string>
                 <string>syslog:</string>
                 <string>--emperor</string>
