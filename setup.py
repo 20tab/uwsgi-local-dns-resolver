@@ -10,7 +10,7 @@ def readme():
 
 setup(
     name='uwsgidns',
-    version='1.0',
+    version='1.0.1',
     description='Dinamically route to localhost request for uWSGI locally subscribed domains.',
     long_description=readme(),
     url='https://github.com/20tab/uwsgi-local-dns-resolver',

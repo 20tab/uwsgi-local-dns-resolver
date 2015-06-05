@@ -14,7 +14,12 @@ uWSGI-DNS is still a work in progress. As a consequence, its APIs could be subje
 - Failed nodes detection and handling.
 
 ## Installation
-Until uWSGI-DNS lands on PyPi you can install it as follows:
+You can install uwsgi-dns through PIP with:
+```bash
+$ pip install uwsgidns  # you could need to use sudo here, or -U
+```
+
+Alternatively, you can clone the repository manually:
 ```bash
 $ git clone https://github.com/20tab/uwsgi-local-dns-resolver.git
 $ cd uwsgi-local-dns-resolver
