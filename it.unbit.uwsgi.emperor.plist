@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>RunAtLoad</key>
+        <true/>
+        <key>Disabled</key>
+        <false/>
+        <key>KeepAlive</key>
+    	<dict>
+         	<key>SuccessfulExit</key>
+         	<false/>
+   	 </dict>
+        <key>Label</key>
+        <string>it.unbit.uwsgi.emperor</string>
+        <key>ProgramArguments</key>
+        <array>
+                <string>/usr/local/bin/uwsgi</string>
+                <string>--master</string>
+                <string>--die-on-term</string>
+                <!-- You could either need or not some more plugins,
+                     if you're using a monolitic uWSGI build -->
+                <string>--plugin</string>
+                <string>syslog</string>
+                <string>--logger</string>
+                <string>syslog:</string>
+                <string>--emperor</string>
+                <string>/Users/*/*/vassals/*.ini</string>
+                <string>--emperor</string>
+                <string>/Users/*/vassals/*.ini</string>
+                <string>--emperor-tyrant</string>
+                <string>--http</string>
+                <string>:80</string>
+                <string>--http-subscription-server</string>
+                <string>127.0.0.1:5005</string>
+                <string>--http-resubscribe</string>
+                <string>127.0.0.1:9696</string>
+                <string>--http-stats-server</string>
+                <string>127.0.0.1:5004</string>
+                <string>--emperor-stats-server</string>
+                <string>127.0.0.1:5000</string>
+                <string>--attach-daemon</string>
+                <string>/usr/local/bin/uwsgidns -p</string>
+        </array>
+</dict>
+</plist>

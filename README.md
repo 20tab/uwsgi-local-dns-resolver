@@ -60,8 +60,8 @@ otherwise, it simply drops such requests and let the OS fallback DNS server hand
 Setting the `-s` will let uWSGI-DNS poll the uWSGI subscription server periodically.
 In this way uWSGI-DNS will notice failed/disappeared HTTP nodes and will remove them from the local domains.
 
-## uWSGI integration
-The integration with uWSGI is simple and straightforward.
+## uWSGI (Emperor) integration
+The integration with the uWSGI emperor is simple and straightforward.
 We assume you use the uWSGI HTTP subscription server.
 To integrate uWSGI-DNS you can edit the configuration file of your emperor/subscription server as follows:
 
@@ -80,6 +80,8 @@ attach-daemon = uwsgidns
 ```
 Anytime you'll launch the subscription system, the uWSGI-DNS server will launch with it.
 
+Please note that in the following section we provide some more OS-specific examples.
+
 ## OS integration
 TODO: other OSs integration.
 
@@ -88,7 +90,9 @@ We provide here just a few examples, adapt them to your needs.
 
 ### OS X integration
 You can use LaunchD to automatically launch a uWSGI emperor instance on startup.
-To do so, create the file `it.unbit.uwsgi.emperor.plist` in the `/Library/LaunchDaemons/` directory and make sure it has the following content:
+To do so, create the file `it.unbit.uwsgi.emperor.plist` in the `/Library/LaunchDaemons/` directory and make sure it has the following content.
+The same example can also be found in this repository.
+
 ```plist
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -110,6 +114,8 @@ To do so, create the file `it.unbit.uwsgi.emperor.plist` in the `/Library/Launch
                 <string>/usr/local/bin/uwsgi</string>
                 <string>--master</string>
                 <string>--die-on-term</string>
+                <!-- You could either need or not some more plugins,
+                     if you're using a monolitic uWSGI build -->
                 <string>--plugin</string>
                 <string>syslog</string>
                 <string>--logger</string>
@@ -130,7 +136,7 @@ To do so, create the file `it.unbit.uwsgi.emperor.plist` in the `/Library/Launch
                 <string>--emperor-stats-server</string>
                 <string>127.0.0.1:5000</string>
                 <string>--attach-daemon</string>
-                <string>/usr/local/bin/uwsgidns</string>
+                <string>/usr/local/bin/uwsgidns -p</string>
         </array>
 </dict>
 </plist>
@@ -140,8 +146,9 @@ Put the vassals configuration files in your home folder and then start the uWSGI
 $ sudo launchctl load /Library/LaunchDaemons/it.unbit.uwsgi.emperor.plist
 ```
 
-You can finally edit your connection parameters and set a [custom DNS server](https://support.apple.com/kb/PH14159) pointing to `127.0.0.1`.
-Make sure that this server is the first of the list and if you don't use uWSGI-DNS as a proxy make sure to specify other fallback servers (your network gateway could be a good candidate).
+You can finally edit your connection parameters and set the [custom DNS server](https://support.apple.com/kb/PH14159) pointing to `127.0.0.1`.
+The DNS resolver will try to solve local requests and then will proxy to upstream the others.
+The default upstream is `8.8.8.8:53` and you can customize it with the `-u UPSTREAM_ADDRESS:PORT` flag.
 
 _Bonus_: before editing your network settings, you can create a new [Network Location](https://support.apple.com/en-us/HT202480) to be specifically used while developing and edit its DNS settings.
 
