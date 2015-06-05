@@ -138,8 +138,9 @@ class LocalResolver(BaseResolver):
                 domain += "."
 
             if domain not in self.domains:
-                with self.lock():
+                with self.lock:
                     self.domains.add(domain)
+                logger.debug("add_domain_from_uwsgi added {}".format(domain))
         except KeyError:
             logger.error("add_domain_from_uwsgi received a malformed dictionary.")
 
@@ -155,6 +156,7 @@ class LocalResolver(BaseResolver):
         if domains != self.domains:
             with self.lock:
                 self.domains = domains
+            logger.debug("add_domains added {}".format(domains))
 
     def resolve(self, request, handler):
         """
